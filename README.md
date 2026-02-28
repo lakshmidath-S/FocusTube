@@ -23,20 +23,27 @@ FocusTube is a minimal, distraction-free YouTube player tailored for students an
 - **YouTube IFrame API**: Seamless integration with YouTube for playback.
 - **LocalStorage**: Persistent data without the need for a backend.
 
-## 🚀 How to Use
+## � YouTube API Setup
 
-1. **Paste Link**: Copy any YouTube video or playlist link and paste it into the hero input.
-2. **Start Learning**: Hit "Start Focus Mode" to enter the distraction-free player.
-3. **Discover**: Browse the "Auto-Detected CS Courses" section to find curated learning material. Use the horizontal scroll bar to explore 65+ categories.
+To enable the **Auto Course Detector**, you need your own YouTube Data API v3 key. Your key is stored locally in your browser and is never sent to our servers.
 
-## 🌈 Aesthetics
+1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2.  Create a new project (e.g., "FocusTube").
+3.  In the search bar, look for **"YouTube Data API v3"** and click **Enable**.
+4.  Go to **Credentials** > **Create Credentials** > **API Key**.
+5.  Copy your API Key.
+6.  Open FocusTube, click **Settings** (top right), paste your key, and click **Save**.
 
-FocusTube features a curated dark-theme aesthetic with:
-- **Neon accents** (`#6c5ce7`)
-- **Glassmorphism** effects
-- **Dynamic spotlights** that follow your cursor
-- **Floating particles** for a "magical" interaction feel
+## 🚀 Deployment
+
+FocusTube is a static web application and is **100% ready for deployment** via Vercel, GitHub Pages, or Netlify.
+
+### Deploying to Vercel
+1.  Push this code to your GitHub repository.
+2.  Go to [Vercel](https://vercel.com/) and import your repository.
+3.  Vercel will automatically detect the static files and deploy them.
+4.  No environment variables are needed on the server side — everything is handled in the browser!
 
 ---
 
-*Enjoy a focused, high-vibe learning journey.*
+*Enjoy a focused, high-vibe learning journey with Anti-Gravity.*
