@@ -103,9 +103,9 @@ function getCoursesProgress() {
  */
 function goToPlayer(type, id) {
   if (type === 'playlist') {
-    window.location.href = `player.html?list=${encodeURIComponent(id)}`;
+    window.location.href = `player.html#list=${encodeURIComponent(id)}`;
   } else {
-    window.location.href = `player.html?v=${encodeURIComponent(id)}`;
+    window.location.href = `player.html#v=${encodeURIComponent(id)}`;
   }
 }
 

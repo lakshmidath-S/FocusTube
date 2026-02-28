@@ -27,12 +27,16 @@ let timestampInterval = null;     // Interval ID for saving timestamps
 let isPlayerReady = false;
 
 // ============================================================
-// URL PARAMS
+// URL PARAMS — parse from hash first, fallback to query string
 // ============================================================
 
-const params = new URLSearchParams(window.location.search);
-videoId = params.get('v');
-playlistId = params.get('list');
+// Hash format: player.html#list=PLAYLIST_ID or player.html#v=VIDEO_ID
+// Query format (fallback): player.html?list=PLAYLIST_ID or player.html?v=VIDEO_ID
+const hashParams = new URLSearchParams(window.location.hash.slice(1));
+const queryParams = new URLSearchParams(window.location.search);
+
+videoId = hashParams.get('v') || queryParams.get('v');
+playlistId = hashParams.get('list') || queryParams.get('list');
 
 if (playlistId) {
     mode = 'playlist';
