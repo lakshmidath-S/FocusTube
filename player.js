@@ -593,12 +593,62 @@ restartCourseBtn.addEventListener('click', () => {
 });
 
 // ============================================================
-// PAGE VISIBILITY — Save state when user leaves
+// PAGE VISIBILITY — Auto-pause when user leaves, resume on return
 // ============================================================
 
+let wasPlayingBeforeHidden = false;
+
+/**
+ * Pause the video when user switches tabs, minimizes, or alt-tabs away.
+ * Resume playback when they come back.
+ */
 document.addEventListener('visibilitychange', () => {
+    if (!player || !isPlayerReady) return;
+
     if (document.hidden) {
+        // Tab is now hidden — pause if playing
+        try {
+            const state = player.getPlayerState();
+            wasPlayingBeforeHidden = (state === YT.PlayerState.PLAYING);
+            if (wasPlayingBeforeHidden) {
+                player.pauseVideo();
+            }
+        } catch (e) { }
         saveCurrentState();
+    } else {
+        // Tab is visible again — resume if it was playing before
+        if (wasPlayingBeforeHidden) {
+            try {
+                player.playVideo();
+            } catch (e) { }
+            wasPlayingBeforeHidden = false;
+        }
+    }
+});
+
+/**
+ * Also pause when user switches to another window (alt-tab, clicking WhatsApp, etc.)
+ * window.blur fires when this window loses focus entirely.
+ */
+window.addEventListener('blur', () => {
+    if (!player || !isPlayerReady) return;
+    try {
+        const state = player.getPlayerState();
+        if (state === YT.PlayerState.PLAYING) {
+            wasPlayingBeforeHidden = true;
+            player.pauseVideo();
+        }
+    } catch (e) { }
+    saveCurrentState();
+});
+
+window.addEventListener('focus', () => {
+    if (!player || !isPlayerReady) return;
+    if (wasPlayingBeforeHidden) {
+        try {
+            player.playVideo();
+        } catch (e) { }
+        wasPlayingBeforeHidden = false;
     }
 });
 
