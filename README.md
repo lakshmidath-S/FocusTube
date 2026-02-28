@@ -1,7 +1,7 @@
 # 📺 FocusTube — Distraction-Free CS Learning
 
 > [!NOTE]
-> This project was **vibe coded** with ✨. 
+> This project was **vibe coded** with Anti-Gravity ✨. 
 
 FocusTube is a minimal, distraction-free YouTube player tailored for students and self-learners. It strips away comments, recommendations, and sidebars, allowing you to focus entirely on your learning material.
 
