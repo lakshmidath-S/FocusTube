@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FocusTube — Distraction-Free CS Learning</title>
+  <meta name="description"
+    content="A distraction-free YouTube learning platform for Computer Science education. Watch curated courses, track progress, and stay focused." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">▶</div>
+        FocusTube
+      </a>
+      <ul class="nav-links">
+        <li><a href="#continue">Continue Learning</a></li>
+        <li><a href="#autoDetect">Discover</a></li>
+        <li><a href="#courses">Courses</a></li>
+        <li><a href="#paste">Paste Link</a></li>
+        <li><button class="btn btn-secondary btn-sm" onclick="openSettingsModal()" id="settingsBtn">⚙ Settings</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ========== HERO / PASTE LINK ========== -->
+    <section id="paste" class="hero">
+      <div class="container">
+        <h1>Learn Without Distractions</h1>
+        <p>Paste any YouTube video or playlist link and enter focus mode. No comments, no recommendations — just
+          learning.</p>
+        <div class="input-group">
+          <input type="text" id="urlInput" placeholder="Paste a YouTube video or playlist link..." autocomplete="off" />
+          <button class="btn btn-primary" id="startBtn">
+            🎯 Start Focus Mode
+          </button>
+        </div>
+        <p id="urlError" class="text-muted hidden"
+          style="margin-top: 0.75rem; color: var(--danger); font-size: var(--font-sm);">
+          Please enter a valid YouTube video or playlist URL.
+        </p>
+      </div>
+    </section>
+
+    <!-- ========== CONTINUE LEARNING ========== -->
+    <section id="continue" class="section hidden">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">📚 Continue Learning</h2>
+          <span class="section-subtitle">Pick up where you left off</span>
+        </div>
+        <div id="continueGrid" class="course-grid"></div>
+      </div>
+    </section>
+
+    <!-- ========== AUTO-DETECTED COURSES ========== -->
+    <section id="autoDetect" class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">🤖 Auto-Detected CS Courses</h2>
+          <span class="section-subtitle">Discovered via YouTube API · refreshes every 24h</span>
+        </div>
+        <div id="autoDetectStatus"></div>
+        <div id="autoDetectGrid" class="course-grid"></div>
+      </div>
+    </section>
+
+    <!-- ========== CURATED COURSES ========== -->
+    <section id="courses" class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">🎓 Top Free CS Courses</h2>
+          <span class="section-subtitle">Curated playlists from the best educators</span>
+        </div>
+        <div id="coursesGrid" class="course-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <p>FocusTube — Distraction-free learning powered by YouTube. Not affiliated with YouTube or Google.</p>
+    </div>
+  </footer>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay hidden" id="settingsModal" onclick="if(event.target===this)closeSettingsModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>⚙ Settings</h2>
+        <button class="modal-close" onclick="closeSettingsModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <label for="apiKeyInput" class="modal-label">YouTube Data API v3 Key</label>
+        <p class="modal-hint">Get a free key from <a href="https://console.cloud.google.com/apis/credentials"
+            target="_blank" rel="noopener">Google Cloud Console</a>. Enable "YouTube Data API v3".</p>
+        <input type="text" id="apiKeyInput" class="modal-input" placeholder="AIza..." autocomplete="off" />
+        <p class="modal-hint" style="margin-top: 0.5rem;">Your key stays in your browser only (localStorage).</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger btn-sm" onclick="clearApiKey()">Clear Key</button>
+        <button class="btn btn-primary" onclick="saveApiKey()">Save & Detect Courses</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="courses.js"></script>
+  <script src="auto-detect.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

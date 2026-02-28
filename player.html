@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FocusTube — Player</title>
+    <meta name="description" content="Distraction-free YouTube player for focused learning." />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="player-page">
+
+    <!-- ========== TOP BAR ========== -->
+    <header class="player-topbar">
+        <a href="index.html" class="back-link">← Back</a>
+        <h1 class="player-course-title" id="courseTitle">Loading...</h1>
+    </header>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <div class="player-content">
+
+        <!-- Video Panel -->
+        <div class="video-panel">
+            <div class="video-wrapper">
+                <div id="ytPlayer"></div>
+            </div>
+
+            <!-- Video Info -->
+            <div class="video-info">
+                <p class="video-progress-text" id="videoProgressText"></p>
+                <div class="player-actions">
+                    <button class="btn btn-success btn-sm" id="markCompleteBtn" title="Mark current video as completed">
+                        ✓ Mark Complete
+                    </button>
+                    <button class="btn btn-danger btn-sm" id="restartCourseBtn" title="Reset all progress">
+                        ↺ Restart Course
+                    </button>
+                </div>
+            </div>
+
+            <!-- Course Progress Bar -->
+            <div class="player-progress-section" id="progressSection">
+                <div class="player-progress-label">
+                    <span>Course Progress</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="player-progress-bar">
+                    <div class="player-progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Playlist Sidebar (hidden for single videos) -->
+        <aside class="playlist-sidebar" id="playlistSidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title" id="sidebarTitle">Playlist</h2>
+                <p class="sidebar-count" id="sidebarCount"></p>
+            </div>
+            <div class="playlist-items" id="playlistItems"></div>
+            <div class="shortcuts-hint">
+                <span><kbd>Space</kbd> Play/Pause</span>
+                <span><kbd>←</kbd> -10s</span>
+                <span><kbd>→</kbd> +10s</span>
+            </div>
+        </aside>
+    </div>
+
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="player.js"></script>
+</body>
+
+</html>
