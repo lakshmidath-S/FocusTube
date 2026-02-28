@@ -23,21 +23,79 @@ const YT_API_BASE = 'https://www.googleapis.com/youtube/v3';
  * Users can toggle these on/off to control which domains are searched.
  */
 const TOPICS = {
+    // ── CS Fundamentals ──
     'Computer Science': 'computer science full course',
     'Data Structures': 'data structures full course',
     'Algorithms': 'algorithms full course',
     'Operating Systems': 'operating systems course',
     'Databases': 'database systems course',
-    'Machine Learning': 'machine learning full course',
-    'Web Development': 'web development full course',
-    'Python': 'python full course',
-    'C++': 'c++ full course',
     'System Design': 'system design course',
-    'Java': 'java full course',
     'Networking': 'computer networking course',
-    'Cybersecurity': 'cybersecurity full course',
-    'Cloud Computing': 'cloud computing course',
+    'Compiler Design': 'compiler design full course',
+    'Discrete Math': 'discrete mathematics course',
+    'Computer Graphics': 'computer graphics course',
+    'Theory of Computation': 'theory of computation course',
+    // ── AI / ML / Data ──
+    'Machine Learning': 'machine learning full course',
+    'Deep Learning': 'deep learning full course',
+    'Data Science': 'data science full course',
+    'AI': 'artificial intelligence full course',
+    'NLP': 'natural language processing course',
+    'Computer Vision': 'computer vision full course',
+    'Data Analytics': 'data analytics full course',
+    // ── Programming Languages ──
+    'Python': 'python full course',
+    'JavaScript': 'javascript full course',
+    'Java': 'java full course',
+    'C++': 'c++ full course',
+    'C': 'c programming full course',
+    'TypeScript': 'typescript full course',
+    'Go': 'golang full course',
+    'Rust': 'rust programming full course',
+    'Kotlin': 'kotlin full course',
+    'Swift': 'swift programming course',
+    'R': 'r programming full course',
+    'SQL': 'sql full course',
+    'PHP': 'php full course',
+    'Ruby': 'ruby programming full course',
+    'Dart': 'dart programming full course',
+    // ── Web Frameworks ──
+    'Web Development': 'web development full course',
+    'React': 'react js full course',
+    'Next.js': 'next js full course',
+    'Angular': 'angular full course',
+    'Vue.js': 'vue js full course',
+    'Node.js': 'node js full course',
+    'Express.js': 'express js full course',
+    'Django': 'django full course',
+    'Spring Boot': 'spring boot full course',
+    'Flask': 'flask full course',
+    'Tailwind CSS': 'tailwind css full course',
+    'HTML CSS': 'html css full course',
+    // ── Mobile ──
+    'Android': 'android development full course',
+    'iOS': 'ios development full course',
+    'Flutter': 'flutter full course',
+    'React Native': 'react native full course',
+    // ── DevOps & Cloud ──
     'DevOps': 'devops full course',
+    'Docker': 'docker full course',
+    'Kubernetes': 'kubernetes full course',
+    'AWS': 'aws full course',
+    'Azure': 'azure full course',
+    'GCP': 'google cloud full course',
+    'Linux': 'linux full course',
+    'Git': 'git full course',
+    'CI/CD': 'ci cd pipeline full course',
+    // ── Security & Other ──
+    'Cybersecurity': 'cybersecurity full course',
+    'Blockchain': 'blockchain full course',
+    'Cloud Computing': 'cloud computing course',
+    'Embedded Systems': 'embedded systems course',
+    'Game Development': 'game development full course',
+    'Unity': 'unity game development course',
+    'DSA Interview': 'data structures algorithms interview prep',
+    'Competitive Programming': 'competitive programming course',
 };
 
 const ALL_TOPIC_KEYS = Object.keys(TOPICS);
@@ -569,6 +627,7 @@ function clearApiKey() {
 // ============================================================
 
 function renderTopicChips() {
+    const wrapper = document.getElementById('topicChipsWrapper');
     const container = document.getElementById('topicChips');
     if (!container) return;
 
@@ -577,8 +636,42 @@ function renderTopicChips() {
     container.innerHTML = ALL_TOPIC_KEYS.map(topic => {
         const isActive = selected.includes(topic);
         const cls = isActive ? 'topic-chip active' : 'topic-chip';
-        return `<button class="${cls}" onclick="toggleTopic('${topic}')">${topic}</button>`;
+        // Escape single quotes in topic name for onclick
+        const safeTopic = topic.replace(/'/g, "\\'");
+        return `<button class="${cls}" onclick="toggleTopic('${safeTopic}')">${topic}</button>`;
     }).join('');
+
+    // Update arrow visibility after render
+    if (wrapper) updateScrollArrows(wrapper);
+}
+
+/** Scroll the topic chip bar left or right */
+function scrollTopics(direction) {
+    const container = document.getElementById('topicChips');
+    if (!container) return;
+    const scrollAmount = 300;
+    container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+
+    // Update arrows after scroll completes
+    const wrapper = document.getElementById('topicChipsWrapper');
+    if (wrapper) setTimeout(() => updateScrollArrows(wrapper), 350);
+}
+
+/** Show/hide scroll arrows based on scroll position */
+function updateScrollArrows(wrapper) {
+    const container = document.getElementById('topicChips');
+    if (!container || !wrapper) return;
+
+    const leftBtn = wrapper.querySelector('.scroll-arrow-left');
+    const rightBtn = wrapper.querySelector('.scroll-arrow-right');
+    if (!leftBtn || !rightBtn) return;
+
+    leftBtn.style.opacity = container.scrollLeft > 10 ? '1' : '0';
+    leftBtn.style.pointerEvents = container.scrollLeft > 10 ? 'auto' : 'none';
+
+    const maxScroll = container.scrollWidth - container.clientWidth;
+    rightBtn.style.opacity = container.scrollLeft < maxScroll - 10 ? '1' : '0';
+    rightBtn.style.pointerEvents = container.scrollLeft < maxScroll - 10 ? 'auto' : 'none';
 }
 
 // ============================================================

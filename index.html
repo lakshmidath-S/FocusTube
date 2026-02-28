@@ -72,7 +72,11 @@
               Refresh</button>
           </div>
         </div>
-        <div id="topicChips" class="topic-chips"></div>
+        <div id="topicChipsWrapper" class="topic-chips-wrapper">
+          <button class="scroll-arrow scroll-arrow-left" onclick="scrollTopics(-1)" title="Scroll left">‹</button>
+          <div id="topicChips" class="topic-chips"></div>
+          <button class="scroll-arrow scroll-arrow-right" onclick="scrollTopics(1)" title="Scroll right">›</button>
+        </div>
         <div id="autoDetectStatus"></div>
         <div id="autoDetectGrid" class="course-grid"></div>
       </div>

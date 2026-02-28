@@ -124,6 +124,8 @@ function initVideoPlayer() {
             rel: 0,
             playsinline: 1,
             autoplay: 1,
+            iv_load_policy: 3, // Hide annotations
+            autohide: 1,
         },
         events: {
             onReady: onPlayerReady,
@@ -150,6 +152,8 @@ function initPlaylistPlayer() {
             rel: 0,
             playsinline: 1,
             autoplay: 1,
+            iv_load_policy: 3, // Hide annotations
+            autohide: 1,
             listType: 'playlist',
             list: playlistId,
             index: currentIndex,
@@ -160,6 +164,32 @@ function initPlaylistPlayer() {
         },
     });
 }
+
+// ============================================================
+// SHARED PLAYER LOGIC
+// ============================================================
+
+/**
+ * Shows/hides an overlay to block YouTube's "More videos" and distractions 
+ * when the player is paused or has ended.
+ */
+function handleVideoStateChange(state) {
+    const overlay = document.getElementById('distractionOverlay');
+    if (!overlay) return;
+
+    if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) {
+        overlay.classList.remove('hidden');
+    } else if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) {
+        overlay.classList.add('hidden');
+    }
+}
+
+/** Global function to resume video from the overlay */
+window.resumeVideo = function () {
+    if (player && player.playVideo) {
+        player.playVideo();
+    }
+};
 
 function onPlaylistPlayerReady(event) {
     isPlayerReady = true;
@@ -182,6 +212,7 @@ function onPlaylistPlayerReady(event) {
 
 function onPlaylistStateChange(event) {
     const state = event.data;
+    handleVideoStateChange(state);
 
     if (state === YT.PlayerState.PLAYING) {
         // Update current index from the player
@@ -231,8 +262,11 @@ function onPlayerReady(event) {
 }
 
 function onPlayerStateChange(event) {
+    const state = event.data;
+    handleVideoStateChange(state);
+
     // For single videos we just update the title when playing
-    if (event.data === YT.PlayerState.PLAYING) {
+    if (state === YT.PlayerState.PLAYING) {
         try {
             const videoData = player.getVideoData();
             if (videoData && videoData.title) {

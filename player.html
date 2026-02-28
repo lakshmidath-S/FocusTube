@@ -24,6 +24,13 @@
         <div class="video-panel">
             <div class="video-wrapper">
                 <div id="ytPlayer"></div>
+                <div id="distractionOverlay" class="distraction-overlay hidden">
+                    <div class="overlay-content">
+                        <h2 class="overlay-title">Paused for Focus</h2>
+                        <p class="overlay-text">Click anywhere to resume your learning journey.</p>
+                        <button class="btn btn-primary" onclick="resumeVideo()">▶ Resume Video</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Video Info -->
