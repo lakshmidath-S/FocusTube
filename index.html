@@ -66,8 +66,13 @@
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">🤖 Auto-Detected CS Courses</h2>
-          <span class="section-subtitle">Discovered via YouTube API · refreshes every 24h</span>
+          <div style="display:flex; align-items:center; gap: var(--space-sm);">
+            <span class="section-subtitle">Select topics · </span>
+            <button class="btn btn-secondary btn-sm" onclick="refreshCourses()" title="Refresh now (uses API quota)">↻
+              Refresh</button>
+          </div>
         </div>
+        <div id="topicChips" class="topic-chips"></div>
         <div id="autoDetectStatus"></div>
         <div id="autoDetectGrid" class="course-grid"></div>
       </div>

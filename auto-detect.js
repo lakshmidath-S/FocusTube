@@ -14,22 +14,36 @@
 
 const AUTO_CACHE_KEY = 'auto_courses_cache';
 const API_KEY_STORAGE = 'yt_api_key';
+const TOPICS_STORAGE = 'selected_topics';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const YT_API_BASE = 'https://www.googleapis.com/youtube/v3';
 
-/** Search queries to discover CS courses */
-const SEARCH_QUERIES = [
-    'computer science full course',
-    'data structures full course',
-    'algorithms full course',
-    'operating systems course',
-    'database systems course',
-    'machine learning full course',
-    'web development full course',
-    'python full course',
-    'c++ full course',
-    'system design course',
-];
+/**
+ * Available topics — each maps a display label to a YouTube search query.
+ * Users can toggle these on/off to control which domains are searched.
+ */
+const TOPICS = {
+    'Computer Science': 'computer science full course',
+    'Data Structures': 'data structures full course',
+    'Algorithms': 'algorithms full course',
+    'Operating Systems': 'operating systems course',
+    'Databases': 'database systems course',
+    'Machine Learning': 'machine learning full course',
+    'Web Development': 'web development full course',
+    'Python': 'python full course',
+    'C++': 'c++ full course',
+    'System Design': 'system design course',
+    'Java': 'java full course',
+    'Networking': 'computer networking course',
+    'Cybersecurity': 'cybersecurity full course',
+    'Cloud Computing': 'cloud computing course',
+    'DevOps': 'devops full course',
+};
+
+const ALL_TOPIC_KEYS = Object.keys(TOPICS);
+
+// Default selected topics (first 5)
+const DEFAULT_TOPICS = ALL_TOPIC_KEYS.slice(0, 5);
 
 /** Trusted educational channels get a score bonus */
 const TRUSTED_CHANNELS = [
@@ -70,6 +84,46 @@ function setApiKey(key) {
 }
 
 // ============================================================
+// TOPIC SELECTION
+// ============================================================
+
+function getSelectedTopics() {
+    try {
+        const stored = JSON.parse(localStorage.getItem(TOPICS_STORAGE));
+        if (Array.isArray(stored) && stored.length > 0) return stored;
+    } catch { }
+    return DEFAULT_TOPICS;
+}
+
+function setSelectedTopics(topics) {
+    localStorage.setItem(TOPICS_STORAGE, JSON.stringify(topics));
+}
+
+/** Toggle a topic on/off, clear cache, and re-render */
+function toggleTopic(topicKey) {
+    const selected = getSelectedTopics();
+    const idx = selected.indexOf(topicKey);
+    if (idx === -1) {
+        selected.push(topicKey);
+    } else {
+        // Don't allow deselecting all
+        if (selected.length <= 1) return;
+        selected.splice(idx, 1);
+    }
+    setSelectedTopics(selected);
+    // Clear cache so next render fetches fresh results for new selection
+    localStorage.removeItem(AUTO_CACHE_KEY);
+    renderTopicChips();
+    renderAutoDetectedCourses();
+}
+
+/** Force refresh — clears cache and re-fetches */
+function refreshCourses() {
+    localStorage.removeItem(AUTO_CACHE_KEY);
+    renderAutoDetectedCourses();
+}
+
+// ============================================================
 // CACHE MANAGEMENT
 // ============================================================
 
@@ -79,10 +133,13 @@ function getCachedCourses() {
         if (!raw) return null;
         const cache = JSON.parse(raw);
         // Check if cache is still valid (< 24 hours old)
-        if (cache.timestamp && (Date.now() - cache.timestamp) < CACHE_TTL_MS) {
+        // Also verify the cached topics match current selection
+        const currentTopics = getSelectedTopics().sort().join(',');
+        const cachedTopics = (cache.topics || []).sort().join(',');
+        if (cache.timestamp && (Date.now() - cache.timestamp) < CACHE_TTL_MS && currentTopics === cachedTopics) {
             return cache.courses;
         }
-        return null; // Cache expired
+        return null; // Cache expired or topics changed
     } catch {
         return null;
     }
@@ -92,6 +149,7 @@ function setCachedCourses(courses) {
     const cache = {
         timestamp: Date.now(),
         courses: courses,
+        topics: getSelectedTopics(),  // Store which topics were used
     };
     localStorage.setItem(AUTO_CACHE_KEY, JSON.stringify(cache));
 }
@@ -329,11 +387,11 @@ async function autoDetectCourses() {
     const allPlaylists = [];
     const allVideos = [];
 
-    // Batch search — limit to 5 queries to save quota (alternate queries each day)
-    const dayOfYear = Math.floor((Date.now() / 86400000)) % 2;
-    const queries = dayOfYear === 0
-        ? SEARCH_QUERIES.slice(0, 5)
-        : SEARCH_QUERIES.slice(5, 10);
+    // Only search for user-selected topics
+    const selectedTopics = getSelectedTopics();
+    const queries = selectedTopics
+        .filter(t => TOPICS[t])  // safety check
+        .map(t => TOPICS[t]);
 
     for (const query of queries) {
         const [playlists, videos] = await Promise.all([
@@ -507,7 +565,24 @@ function clearApiKey() {
 }
 
 // ============================================================
-// RENDER
+// RENDER: Topic Chips
+// ============================================================
+
+function renderTopicChips() {
+    const container = document.getElementById('topicChips');
+    if (!container) return;
+
+    const selected = getSelectedTopics();
+
+    container.innerHTML = ALL_TOPIC_KEYS.map(topic => {
+        const isActive = selected.includes(topic);
+        const cls = isActive ? 'topic-chip active' : 'topic-chip';
+        return `<button class="${cls}" onclick="toggleTopic('${topic}')">${topic}</button>`;
+    }).join('');
+}
+
+// ============================================================
+// RENDER: Auto-Detected Courses
 // ============================================================
 
 /**
@@ -521,6 +596,7 @@ async function renderAutoDetectedCourses() {
     if (!section || !grid || !status) return;
 
     section.classList.remove('hidden');
+    renderTopicChips(); // always render chips
     const apiKey = getApiKey();
 
     // No API key configured

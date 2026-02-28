@@ -957,6 +957,45 @@ img {
 }
 
 /* ============================================================
+   TOPIC CHIPS
+   ============================================================ */
+
+.topic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.topic-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.topic-chip:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.topic-chip.active {
+  background: rgba(108, 92, 231, 0.2);
+  border-color: var(--accent);
+  color: var(--accent-light);
+  font-weight: 600;
+}
+
+/* ============================================================
    SHIMMER LOADING
    ============================================================ */
 
