@@ -1062,6 +1062,69 @@ img {
 }
 
 /* ============================================================
+   MAGIC EFFECTS — Border Glow, Spotlight, Particles
+   ============================================================ */
+
+.magic-glow {
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 400px;
+  --glow-color: 108, 92, 231;
+}
+
+/* Border glow pseudo-element — follows cursor */
+.magic-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 4px;
+  background: radial-gradient(var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+      rgba(var(--glow-color), calc(var(--glow-intensity) * 0.8)) 0%,
+      rgba(var(--glow-color), calc(var(--glow-intensity) * 0.4)) 30%,
+      transparent 60%);
+  border-radius: inherit;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.magic-glow:hover {
+  box-shadow:
+    0 4px 20px rgba(46, 24, 78, 0.3),
+    0 0 30px rgba(108, 92, 231, 0.15);
+}
+
+/* Particle soft glow */
+.magic-particle::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: rgba(108, 92, 231, 0.2);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+/* Global spotlight cursor follower */
+.global-spotlight {
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+  z-index: 200 !important;
+  pointer-events: none;
+}
+
+/* ============================================================
    FOOTER
    ============================================================ */
 .footer {
