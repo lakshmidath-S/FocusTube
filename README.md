@@ -34,15 +34,6 @@ To enable the **Auto Course Detector**, you need your own YouTube Data API v3 ke
 5.  Copy your API Key.
 6.  Open FocusTube, click **Settings** (top right), paste your key, and click **Save**.
 
-## 🚀 Deployment
-
-FocusTube is a static web application and is **100% ready for deployment** via Vercel, GitHub Pages, or Netlify.
-
-### Deploying to Vercel
-1.  Push this code to your GitHub repository.
-2.  Go to [Vercel](https://vercel.com/) and import your repository.
-3.  Vercel will automatically detect the static files and deploy them.
-4.  No environment variables are needed on the server side — everything is handled in the browser!
 
 ---
 

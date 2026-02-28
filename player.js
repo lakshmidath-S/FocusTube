@@ -130,6 +130,7 @@ function initVideoPlayer() {
         events: {
             onReady: onPlayerReady,
             onStateChange: onPlayerStateChange,
+            onError: onPlayerError,
         },
     });
 }
@@ -161,6 +162,7 @@ function initPlaylistPlayer() {
         events: {
             onReady: onPlaylistPlayerReady,
             onStateChange: onPlaylistStateChange,
+            onError: onPlayerError,
         },
     });
 }
@@ -190,6 +192,44 @@ window.resumeVideo = function () {
         player.playVideo();
     }
 };
+
+/**
+ * Handles YouTube player errors (e.g., video private, deleted, not found).
+ */
+function onPlayerError(event) {
+    console.error('YouTube Player Error:', event.data);
+
+    let msg = 'An error occurred with the video player.';
+    const code = event.data;
+
+    if (code === 100) msg = 'Video not found. It may have been deleted or marked as private.';
+    if (code === 101 || code === 150) msg = 'The owner of this video does not allow it to be played in embedded players.';
+    if (code === 2) msg = 'Invalid video ID format.';
+    if (code === 5) msg = 'The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred.';
+
+    const wrapper = document.querySelector('.video-wrapper');
+    if (wrapper) {
+        // Remove existing error message if any
+        const existing = wrapper.querySelector('.player-error-overlay');
+        if (existing) existing.remove();
+
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'player-error-overlay';
+        errorDiv.innerHTML = `
+            <div class="error-content">
+                <span style="font-size: 3rem; margin-bottom: 1rem;">⚠️</span>
+                <h3>Unable to Play Video</h3>
+                <p>${msg}</p>
+                <a href="index.html" class="btn btn-primary btn-sm" style="margin-top: 1rem;">Back to Home</a>
+            </div>
+        `;
+        wrapper.appendChild(errorDiv);
+
+        // Hide distraction overlay if it exists
+        const distraction = document.getElementById('distractionOverlay');
+        if (distraction) distraction.classList.add('hidden');
+    }
+}
 
 function onPlaylistPlayerReady(event) {
     isPlayerReady = true;

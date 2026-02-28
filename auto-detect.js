@@ -129,9 +129,8 @@ const TRUSTED_CHANNELS = [
 
 const TRUSTED_BONUS = 2;
 
-// ============================================================
-// API KEY MANAGEMENT
-// ============================================================
+// Global status tracking for errors
+let lastStatus = null; // null, 'no_key', 'invalid_key', 'quota_exceeded', 'network_error', 'topics_changed'
 
 function getApiKey() {
     return localStorage.getItem(API_KEY_STORAGE) || '';
@@ -235,13 +234,30 @@ async function ytApiRequest(endpoint, params) {
     try {
         const resp = await fetch(url.toString());
         if (!resp.ok) {
+            const errorData = await resp.json().catch(() => ({}));
+            const errorReason = errorData?.error?.errors?.[0]?.reason || '';
+
             if (resp.status === 403) {
-                console.warn('[AutoDetect] API quota exceeded or key invalid');
+                if (errorReason === 'quotaExceeded') {
+                    lastStatus = 'quota_exceeded';
+                    console.warn('[AutoDetect] API quota exceeded');
+                } else {
+                    lastStatus = 'invalid_key';
+                    console.warn('[AutoDetect] API key invalid or forbidden');
+                }
+            } else if (resp.status === 400) {
+                lastStatus = 'invalid_key';
+                console.warn('[AutoDetect] Bad request (likely invalid key)');
+            } else {
+                lastStatus = 'network_error';
+                console.warn('[AutoDetect] API error:', resp.status);
             }
             return null;
         }
+        lastStatus = null;
         return await resp.json();
     } catch (e) {
+        lastStatus = 'network_error';
         console.error('[AutoDetect] Network error:', e);
         return null;
     }
@@ -723,11 +739,31 @@ async function renderAutoDetectedCourses() {
 
     if (courses.length === 0) {
         grid.innerHTML = '';
+
+        let icon = '📭';
+        let errorMsg = 'No courses found. Try selecting different topics or checking your API key.';
+        let subMsg = '';
+
+        if (lastStatus === 'invalid_key') {
+            icon = '❌';
+            errorMsg = 'Invalid API Key';
+            subMsg = 'The YouTube API key you provided is invalid or has been restricted. Please check your credentials in Google Cloud Console.';
+        } else if (lastStatus === 'quota_exceeded') {
+            icon = '🪫';
+            errorMsg = 'Daily Limit Reached';
+            subMsg = 'The daily YouTube API quota has been exceeded. This limit resets at midnight Pacific Time. Try again tomorrow or use a different API key.';
+        } else if (lastStatus === 'network_error') {
+            icon = '🌐';
+            errorMsg = 'Network Error';
+            subMsg = 'Unable to connect to YouTube. Please check your internet connection and try again.';
+        }
+
         status.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-icon">📭</div>
-        <p>No courses found. This may be due to an invalid API key or quota limits.</p>
-        <p style="margin-top: 0.5rem;"><button class="btn btn-secondary btn-sm" onclick="openSettingsModal()">⚙ Check API Key</button></p>
+        <div class="empty-state-icon">${icon}</div>
+        <p style="font-weight: 600; color: var(--text-primary);">${errorMsg}</p>
+        <p style="margin-top: 0.5rem; font-size: var(--font-sm); line-height: 1.5;">${subMsg || 'Try selecting different topics or check your settings.'}</p>
+        <p style="margin-top: 1rem;"><button class="btn btn-secondary btn-sm" onclick="openSettingsModal()">⚙ Check Settings</button></p>
       </div>
     `;
         return;

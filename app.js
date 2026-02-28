@@ -183,10 +183,10 @@ function renderContinueLearning() {
           <p class="progress-text">${percent}% complete</p>
         </div>
         <div class="card-footer" style="padding: var(--space-md) var(--space-lg) var(--space-lg);">
-          <button class="btn btn-primary btn-sm" onclick="goToPlayer('playlist', '${playlistId}')">
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); goToPlayer('playlist', '${playlistId}')">
             ▶ Resume
           </button>
-          <button class="btn btn-danger btn-sm" onclick="removeCourse('${playlistId}')">
+          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); removeCourse('${playlistId}')">
             ✕ Remove
           </button>
         </div>

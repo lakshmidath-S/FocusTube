@@ -654,6 +654,37 @@ img {
   overflow: hidden;
 }
 
+.player-error-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  text-align: center;
+  padding: var(--space-xl);
+}
+
+.error-content {
+  max-width: 400px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.error-content h3 {
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.error-content p {
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  line-height: 1.6;
+}
+
 .player-progress-fill {
   height: 100%;
   background: var(--accent-gradient);
